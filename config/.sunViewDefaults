@@ -1,0 +1,95 @@
+! @(#)Improved OpenWindows Xdefaults — Enhanced for OLWM/OLVWM
+
+! -------------------------------------------------------------------
+!  COLOR + WORKSPACE
+! -------------------------------------------------------------------
+OpenWindows.WindowColor:              #a5b2c6
+OpenWindows.WindowForeground:         #000000
+OpenWindows.DataForeground:           #000000
+OpenWindows.DataBackground:           #ffffff
+
+! Classic SunOS 4.x coastline blue
+! 4682b4 is slackware
+OpenWindows.WorkspaceColor:           #160f07
+OpenWindows.WorkspaceStyle:           paintcolor
+OpenWindows.PaintWorkspace:           True
+
+OpenWindows.WorkspaceBitmapFile:      gray
+OpenWindows.WorkspaceBitmapFg:        #000000
+OpenWindows.WorkspaceBitmapBg:        #ffffff
+
+! -------------------------------------------------------------------
+!  GENERAL BEHAVIOR & PERFORMANCE
+! -------------------------------------------------------------------
+OpenWindows.Scale:                    large
+OpenWindows.ScreenSaver.OnOff:        off
+OpenWindows.ScreenSaver.IdleTime:     10
+
+OpenWindows.Beep:                     always
+OpenWindows.BeepDuration:             100
+
+! Click-to-focus but do NOT auto-raise (more UNIX workstation feel)
+OpenWindows.SetInput:                 select
+OpenWindows.AutoRaise:                False
+
+! Faster double-click feel
+OpenWindows.MultiClickTimeout:        3
+
+! Smoother mouse
+OpenWindows.MouseAcceleration:        2
+OpenWindows.MouseThreshold:           7
+OpenWindows.PointerMapping:           right
+
+! Keep menus fast and snappy
+OpenWindows.ScrollbarJumpCursor:      True
+OpenWindows.PopupJumpCursor:          True
+
+OpenWindows.ScrollbarPlacement:       right
+OpenWindows.IconLocation:             bottom
+
+! -------------------------------------------------------------------
+!  FONTS (Helvetica is fine — this is era-correct)
+! -------------------------------------------------------------------
+OpenWindows.TitleFont:  -adobe-helvetica-bold-r-normal--14-*-*-*-*-*-iso8859-1
+OpenWindows.TextFont:   -adobe-helvetica-medium-r-normal--12-*-*-*-*-*-iso8859-1
+OpenWindows.ButtonFont: -adobe-helvetica-medium-r-normal--12-*-*-*-*-*-iso8859-1
+OpenWindows.IconFont:   -adobe-helvetica-medium-r-normal--10-*-*-*-*-*-iso8859-1
+
+! -------------------------------------------------------------------
+!  OPENLOOK KEYBOARD ENHANCEMENTS
+! -------------------------------------------------------------------
+
+! These override the “Basic” command set — last definition wins
+! Window Cycling (modern Alt+Tab)
+OpenWindows.KeyboardCommands: \
+    Alt<Key>Tab: NEXT_WINDOW \n\
+    Alt Shift<Key>Tab: PREV_WINDOW \n\
+\
+! Move and Resize (like fvwm / twm / mwm power users)
+    Alt<Key>F7: WINDOW_MOVE \n\
+    Alt<Key>F8: WINDOW_RESIZE \n\
+\
+! Lower / Raise
+    Alt<Key>F9: WINDOW_BACK \n\
+    Alt<Key>F10: WINDOW_FRONT \n\
+\
+! Workspace switching (OLVWM only — safe to leave even if using OLWM)
+    Alt<Key>Left: PREV_WORKSPACE \n\
+    Alt<Key>Right: NEXT_WORKSPACE
+
+! -------------------------------------------------------------------
+!  MENU + ICON BEHAVIOR
+! -------------------------------------------------------------------
+OpenWindows.SelectDisplaysMenu:       True
+OpenWindows.MenuAccelerators:         True
+OpenWindows.WindowMenuAccelerators:   True
+OpenWindows.WorkspaceMenu:	      True
+
+! -------------------------------------------------------------------
+!  MISC TUNING
+! -------------------------------------------------------------------
+! DragRightDistance prevents accidental button-3 drags
+OpenWindows.DragRightDistance:        100
+
+! Make buttons feel more tactile
+OpenWindows.ButtonLook:               3D
