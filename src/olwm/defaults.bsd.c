@@ -1,0 +1,141 @@
+#ident "@(#)defaults.c	26.22    93/06/28 SMI"
+
+/*
+ *      (c) Copyright 1989 Sun Microsystems, Inc.
+ */
+
+/*
+ *      Sun design patents pending in the U.S. and foreign countries. See
+ *      LEGAL_NOTICE file for terms of the license.
+ */
+
+#ifdef SYSV
+#include <sys/types.h>
+#endif
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/file.h>
+#include <X11/Xos.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xatom.h>
+#include <X11/Xresource.h>
+#ifdef OW_I18N_L4
+#include <sys/param.h>
+#endif
+
+#include "i18n.h"
+#include "ollocale.h"
+#include "olwm.h"
+#include "defaults.h"
+#include "globals.h"
+#include "resources.h"
+
+/*
+ * GetUserDefaults
+ *
+ * Get RESOURCE_MANAGER string from server; if none, then load from
+ * $HOME/.Xdefaults.  If XENVIRONMENT names a file, load and merge it.
+ * Otherwise, load $HOME/.Xdefaults-hostname and merge it.
+ */
+XrmDatabase
+GetUserDefaults(Display *dpy)
+{
+    XrmDatabase serverDB = NULL;
+    XrmDatabase fileDB = NULL;
+    char filename[1024];
+    unsigned long nitems, remain;
+    char *rsrcstr;
+    char *homedir = getenv("HOME");
+    char *envfile = getenv("XENVIRONMENT");
+    char hostname[100];
+
+    rsrcstr = GetWindowProperty(dpy, RootWindow(dpy, 0), XA_RESOURCE_MANAGER,
+                                0L, 100000000L, /* REMIND: use ENTIRE_CONTENTS */
+                                XA_STRING, 0L, &nitems, &remain);
+
+    if (rsrcstr == NULL) {
+        if (homedir != NULL) {
+            strcpy(filename, homedir);
+            strcat(filename, "/.Xdefaults");
+            serverDB = XrmGetFileDatabase(filename);
+        }
+    } else {
+        serverDB = XrmGetStringDatabase(rsrcstr);
+        XFree(rsrcstr);
+    }
+
+    /* Now try XENVIRONMENT or $HOME/.Xdefaults-hostname. */
+    if (envfile == NULL) {
+        if (homedir != NULL) {
+            strcpy(filename, homedir);
+            strcat(filename, "/.Xdefaults-");
+            if (0 == gethostname(hostname, sizeof(hostname))) {
+                strcat(filename, hostname);
+                fileDB = XrmGetFileDatabase(filename);
+            }
+        }
+    } else {
+        fileDB = XrmGetFileDatabase(envfile);
+    }
+
+    if (fileDB != NULL)
+        XrmMergeDatabases(fileDB, &serverDB);
+
+    return serverDB;
+}
+
+/*
+ * GetAppDefaults
+ *
+ * Gets the app-defaults file and return a database of its contents.
+ */
+XrmDatabase
+GetAppDefaults()
+{
+    XrmDatabase appDB = NULL;
+    char filename[1024];
+    char *openwinhome = getenv("OPENWINHOME");
+
+#ifdef OW_I18N_L3
+    char *locale = GRV.lc_basic.locale;
+    if (locale != NULL) {
+        if (openwinhome != NULL) {
+            sprintf(filename, "%s/lib/locale/%s/app-defaults/Olwm",
+                    openwinhome, locale);
+            appDB = XrmGetFileDatabase(filename);
+            if (appDB != NULL)
+                return appDB;
+        }
+
+        sprintf(filename, "/usr/lib/X11/app-defaults/%s/Olwm", locale);
+        appDB = XrmGetFileDatabase(filename);
+        if (appDB != NULL)
+            return appDB;
+    }
+#endif
+
+    if (openwinhome != NULL) {
+        strcpy(filename, openwinhome);
+        strcat(filename, "/lib/app-defaults/Olwm");
+        appDB = XrmGetFileDatabase(filename);
+        if (appDB != NULL)
+            return appDB;
+    }
+
+    appDB = XrmGetFileDatabase("/usr/lib/X11/app-defaults/Olwm");
+    return appDB;
+}
+
+/* ===== global functions ================================================= */
+
+void
+GetDefaults(Display *dpy, XrmDatabase commandlineDB)
+{
+    InitGlobals(dpy, commandlineDB);
+}
